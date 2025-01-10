@@ -97,3 +97,28 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+
+Docker:
+
+sudo docker ps -a
+
+sudo docker start mysql57
+
+sudo docker stop mysql57
+
+
+Criando a imagem com referencia para restuarar o backup:
+
+sudo docker run -d   --name mysql57   -e MYSQL_ROOT_PASSWORD=senha123   -e MYSQL_DATABASE=dbloja   -v ~/workspace/dbloja:/docker-entrypoint-initdb.d   -p 3306:3306   mysql:5.7
+
+OBS: na pasta o arquivo do backup precisar ser renomeado para .sql
+
+
+ver log:
+
+sudo docker logs -f mysql57
+
+para acessar o banco no docker:
+
+sudo docker exec -it mysql57 mysql -u root -p
