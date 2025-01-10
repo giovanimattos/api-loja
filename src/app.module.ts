@@ -31,3 +31,4 @@ import { ExtratoSicoobController } from './extrato-sicoob/extrato-sicoob.control
   providers: [AppService, ExtratoSicoobService],
 })
 export class AppModule {}
+
