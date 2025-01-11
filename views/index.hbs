@@ -3,30 +3,271 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vue.js via CDN</title>
-  <!-- Incluindo o Vue.js via CDN -->
+  <title>{{ title }}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+  <link rel="stylesheet" href="https://bulma.io/vendor/fontawesome-free-6.5.2-web/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
+
   <div id="app">
-    <h1>{{ message }}</h1>
-    <h1>${ outra }$</h1>
-    <button @click="changeMessage">Clique aqui para mudar a mensagem</button>
+
+
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        
+        <a class="navbar-item" >
+          <span class="icon">
+            <i class="fa-solid fa-heart"></i>
+          </span>        
+          <span class="bd-nav-item-name" @click="clickMenu(telas.home)" >
+            TRAJE AMOR 
+          </span>
+        </a>
+
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item" v-for="(value, key) in telas" :key="key" v-if="value != telas.home" @click="clickMenu(value)">
+            ${ value.title }$
+          </a>
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              Mais
+            </a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item">
+                About
+              </a>
+              <a class="navbar-item is-selected">
+                Jobs
+              </a>
+              <a class="navbar-item">
+                Contact
+              </a>
+              <hr class="navbar-divider">
+              <a class="navbar-item">
+                Report an issue
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <div class="buttons">
+              {{!-- <a class="button is-primary">
+                <strong>Sign up</strong>
+              </a> --}}
+              <a class="button is-primary" class="js-modal-trigger" data-target="modal-login">
+                Log in
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    {{!-- /************* LATERAL ***************/ --}}
+
+
+    {{!-- /************* BODY ***************/ --}}
+    <div class="container">
+
+      <div class="container" v-show="telas.home.active">
+        <h2 class="title">  </h2>
+        <br><br><br><br>
+        <div class="columns is-mobile">
+          <div class="column"><button class="button is-info is-light is-fullwidth" @click="clickMenu(telas.clientes)">Clientes</button></div>
+          <div class="column"><button class="button is-info is-light is-fullwidth" @click="clickMenu(telas.vendas)">Vendas</button></div>
+        </div>
+
+      </div>
+
+      <div class="container" v-show="telas.clientes.active">
+
+        <h2 class="title"> ${ telas.clientes.title }$ </h2>
+
+        <div class="buttons">
+          <button class="button is-fullwidth" :class="isLoadingCliente ? 'is-loading' : ''" @click="clickGetClientes" >Atualizar</button>
+        </div>
+
+        <table class="table is-striped is-fullwidth" v-if="listaClientes.length">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nome</th>
+              <th>Data Ultima Venda</th>
+              <th>Valor Ultima Venda</th>
+              <th>Qtde Vendas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="cliente in listaClientes" >
+              <td>${ cliente.pescodigo }$</td>
+              <td>${ cliente.pesnomerazao }$</td>
+              <td>${ cliente.data_ult_venda }$</td>
+              <td>${ cliente.valor_ult_venda }$</td>
+              <td>${ cliente.qtdevendas }$</td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+
+    </div>
+
+
+
+    {{!-- /************* FOOTER ***************/ --}}
+
+
+    {{!-- /************* MODAIS ***************/ --}}
+
+    <div class="modal" id="modal-login">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Modal title</p>
+          <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+          
+          
+          <div class="field">
+            <p class="control has-icons-left has-icons-right">
+              <input class="input" type="email" placeholder="Email">
+              <span class="icon is-small is-left">
+                <i class="fas fa-envelope"></i>
+              </span>
+              <span class="icon is-small is-right">
+                <i class="fas fa-check"></i>
+              </span>
+            </p>
+          </div>
+          <div class="field">
+            <p class="control has-icons-left">
+              <input class="input" type="password" placeholder="Password">
+              <span class="icon is-small is-left">
+                <i class="fas fa-lock"></i>
+              </span>
+            </p>
+          </div>
+          <div class="field">
+            <p class="control">
+              <button class="button is-success">
+                Login
+              </button>
+            </p>
+          </div>
+
+
+        </section>
+        <footer class="modal-card-foot">
+          <div class="buttons">
+            <button class="button is-success">Save changes</button>
+            <button class="button">Cancel</button>
+          </div>
+        </footer>
+      </div>
+    </div>
+   
   </div>
 
   <script>
-    new Vue({
+    var vueSys = new Vue({
       el: '#app',
       delimiters: ['${', '}$'],
       data: {
-        outra: 'Olá, Vue.js!'
+        outra: 'Olá, Vue.js!',
+        telas: {
+          home: {active: true, title: 'Home'},
+          clientes: {active: false, title: 'Clientes'},
+          vendas: {active: false, title: 'Vendas'},
+        },
+        listaClientes: [],
+        listaVendas: [],
+        isLoadingCliente: false
       },
       methods: {
         changeMessage() {
           this.outra = 'Você mudou a mensagem!';
+        },
+        clickMenu(menu) {
+          for (const key in this.telas) {
+            if (this.telas.hasOwnProperty(key)) {
+              this.telas[key].active = false;
+            }
+          }
+          menu.active = true;
+        },
+        async clickGetClientes() {
+          this.isLoadingCliente = true; 
+          try {
+            this.listaClientes = [];
+            const response = await axios.get('http://localhost:3000/extrato-sicoob');
+            this.listaClientes = response.data;
+            this.isLoadingCliente = false;
+          } catch (error) {
+            this.isLoadingCliente = false;
+            console.error('Erro ao buscar os dados:', error);
+          }
         }
       }
     });
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Functions to open and close a modal
+      function openModal($el) {
+        $el.classList.add('is-active');
+      }
+
+      function closeModal($el) {
+        $el.classList.remove('is-active');
+      }
+
+      function closeAllModals() {
+        (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+          closeModal($modal);
+        });
+      }
+
+      // Add a click event on buttons to open a specific modal
+      (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+        const modal = $trigger.dataset.target;
+        const $target = document.getElementById(modal);
+
+        $trigger.addEventListener('click', () => {
+          openModal($target);
+        });
+      });
+
+      // Add a click event on various child elements to close the parent modal
+      (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+        const $target = $close.closest('.modal');
+
+        $close.addEventListener('click', () => {
+          closeModal($target);
+        });
+      });
+
+      // Add a keyboard event to close all modals
+      document.addEventListener('keydown', (event) => {
+        if(event.key === "Escape") {
+          closeAllModals();
+        }
+      });
+    });
+
   </script>
 </body>
 </html>

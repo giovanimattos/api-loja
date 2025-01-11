@@ -5,7 +5,7 @@ export class AppService {
 
   getHello() {
     return { 
-      title: 'Vue.js com NestJS',
+      title: 'Traje Amor',
       message: 'Olá do NestJS com Handlebars!'
     };
   }
