@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ExtratoSicoob } from './extrato-sicoob/entities/extrato-sicoob.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ExtratoSicoobService } from './extrato-sicoob/extrato-sicoob.service';
-import { ExtratoSicoobController } from './extrato-sicoob/extrato-sicoob.controller';
+import { ContatoService } from './contato/contato.service';
+import { ContatoModule } from './contato/contato.module';
+import { ContatoController } from './contato/contato.controller';
 
 @Module({
   imports: [
@@ -26,9 +26,10 @@ import { ExtratoSicoobController } from './extrato-sicoob/extrato-sicoob.control
         synchronize: true,
       }),
     }),
+    ContatoModule,
   ],
-  controllers: [AppController, ExtratoSicoobController ],
-  providers: [AppService, ExtratoSicoobService],
+  controllers: [AppController, ContatoController ],
+  providers: [AppService, ContatoService],
 })
 export class AppModule {}
 

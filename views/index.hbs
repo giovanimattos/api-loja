@@ -39,37 +39,15 @@
           <a class="navbar-item" v-for="(value, key) in telas" :key="key" v-if="value != telas.home" @click="clickMenu(value)">
             ${ value.title }$
           </a>
-          <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link">
-              Mais
-            </a>
-            <div class="navbar-dropdown">
-              <a class="navbar-item">
-                About
-              </a>
-              <a class="navbar-item is-selected">
-                Jobs
-              </a>
-              <a class="navbar-item">
-                Contact
-              </a>
-              <hr class="navbar-divider">
-              <a class="navbar-item">
-                Report an issue
-              </a>
-            </div>
-          </div>
+          
         </div>
 
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
-              {{!-- <a class="button is-primary">
-                <strong>Sign up</strong>
-              </a> --}}
-              <a class="button is-primary" class="js-modal-trigger" data-target="modal-login">
+              {{!-- <a class="button is-primary" class="js-modal-trigger" data-target="modal-login">
                 Log in
-              </a>
+              </a> --}}
             </div>
           </div>
         </div>
@@ -84,9 +62,9 @@
 
       <div class="container" v-show="telas.home.active">
         <h2 class="title">  </h2>
-        <br><br><br><br>
+        <br><br><br>
         <div class="columns is-mobile">
-          <div class="column"><button class="button is-info is-light is-fullwidth" @click="clickMenu(telas.clientes)">Clientes</button></div>
+          <div class="column"><button class="button is-info is-light is-fullwidth" @click="clickMenu(telas.clientes)">Contatos</button></div>
           <div class="column"><button class="button is-info is-light is-fullwidth" @click="clickMenu(telas.vendas)">Vendas</button></div>
         </div>
 
@@ -108,15 +86,21 @@
               <th>Data Ultima Venda</th>
               <th>Valor Ultima Venda</th>
               <th>Qtde Vendas</th>
+              <th>Último Contato</th>
+              <th>Ações</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="cliente in listaClientes" >
+            <tr v-for="(cliente, index)  in listaClientes" >
               <td>${ cliente.pescodigo }$</td>
               <td>${ cliente.pesnomerazao }$</td>
               <td>${ cliente.data_ult_venda }$</td>
               <td>${ cliente.valor_ult_venda }$</td>
               <td>${ cliente.qtdevendas }$</td>
+              <td>${ cliente.data_ultimo_contato }$</td>
+              <td>
+                <button class="button is-primary" :class="cliente.is_loading == 1 ? 'is-loading' : ''" @click="contatoFeito(cliente, index)"> Contato Feito</button>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -190,7 +174,7 @@
         outra: 'Olá, Vue.js!',
         telas: {
           home: {active: true, title: 'Home'},
-          clientes: {active: false, title: 'Clientes'},
+          clientes: {active: false, title: 'Contatos'},
           vendas: {active: false, title: 'Vendas'},
         },
         listaClientes: [],
@@ -213,11 +197,24 @@
           this.isLoadingCliente = true; 
           try {
             this.listaClientes = [];
-            const response = await axios.get('http://localhost:3000/extrato-sicoob');
+            const response = await axios.get('http://localhost:3000/contato');
             this.listaClientes = response.data;
             this.isLoadingCliente = false;
           } catch (error) {
             this.isLoadingCliente = false;
+            console.error('Erro ao buscar os dados:', error);
+          }
+        },
+        async contatoFeito(cliente, index) {
+          cliente.is_loading = 1; 
+          try {
+            const response = await axios.post("http://localhost:3000/contato/contato-feito", {
+              pescodigo: cliente.pescodigo,
+            });
+            this.listaClientes.splice(index, 1);
+            cliente.is_loading = 0;
+          } catch (error) {
+            cliente.is_loading = 0;
             console.error('Erro ao buscar os dados:', error);
           }
         }

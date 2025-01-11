@@ -5,7 +5,7 @@ export class AppService {
 
   getHello() {
     return { 
-      title: 'Traje Amor',
+      title: 'Traje Amor - CRM',
       message: 'Olá do NestJS com Handlebars!'
     };
   }
